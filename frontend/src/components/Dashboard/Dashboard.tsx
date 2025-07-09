@@ -37,6 +37,13 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     },
   ])
 
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  const filteredCertificateData = certificateData.filter((cert) => {
+    if (statusFilter === "all") return true
+    return cert.status.toLowerCase().replace(" ", "-") === statusFilter
+  })
+
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [username, setUsername] = useState("Admin")
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -151,9 +158,22 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               <p className="last-updated">Updated At 20/04/2025 At 4:30 PM</p>
             </div>
             <div className="header-right">
-              <div className="search-container">
-                <input type="text" placeholder="Search..." className="search-input" />
-                <div className="search-icon">🔍</div>
+              <div className="search-filter-container">
+                <div className="search-container">
+                  <input type="text" placeholder="Search..." className="search-input" />
+                  <div className="search-icon">🔍</div>
+                </div>
+                <div className="filter-container">
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="in-process">In Process</option>
+                    <option value="ready">Ready</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -161,13 +181,13 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           {/* Certificate Table */}
           <div className="watchlist-container">
             <div className="table-header">
-              <div className="header-cert">Cert Number ({certificateData.length})</div>
+              <div className="header-cert">Cert Number ({filteredCertificateData.length})</div>
               <div className="header-county">County</div>
               <div className="header-status">Status</div>
             </div>
 
             <div className="table-body">
-              {certificateData.map((cert) => (
+              {filteredCertificateData.map((cert) => (
                 <div key={cert.id} className="table-row">
                   <div className="cell-cert">
                     <span className="cert-number">{cert.certNumber}</span>
