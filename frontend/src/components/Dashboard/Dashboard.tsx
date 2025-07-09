@@ -16,30 +16,11 @@ interface CertificateData {
 }
 
 export default function Dashboard({ onLogout }: DashboardProps) {
-  // Certificate data in state
-  const [certificateData, setCertificateData] = useState<CertificateData[]>([
-    {
-      id: 1,
-      certNumber: "2023-C-000035",
-      county: "Logan",
-      status: "In process",
-    },
-    {
-      id: 2,
-      certNumber: "2023-C-000174",
-      county: "Logan",
-      status: "In process",
-    },
-    {
-      id: 3,
-      certNumber: "2022-C-000174",
-      county: "wood",
-      status: "Ready",
-    },
-  ])
+  // Certificate data in state - start with empty array
+  const [certificateData, setCertificateData] = useState<CertificateData[]>([])
+  const [loading, setLoading] = useState(false)
 
   const [statusFilter, setStatusFilter] = useState<string>("all")
-
   const filteredCertificateData = certificateData.filter((cert) => {
     if (statusFilter === "all") return true
     return cert.status.toLowerCase().replace(" ", "-") === statusFilter
@@ -65,8 +46,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   }, [dropdownOpen])
 
-
-
   const handleLogout = () => {
     setDropdownOpen(false)
     onLogout()
@@ -77,31 +56,35 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     if (storedUsername) {
       setUsername(storedUsername)
     }
-
-    //get certificate list
+    // Get certificate list on component mount
     getCertificateList()
   }, [])
 
   const getCertificateList = async () => {
-    const response = await getApiWithAuth('certificates/?limit=10&page=1' )
-    console.log("=====get certificate list" , response.data.data.data.results)
-    
-  }
+    try {
+      setLoading(true)
+      const response = await getApiWithAuth("certificates/?limit=8&page=1")
+      console.log("=====get certificate list", response.data.data.data.results)
 
-  // Function to add new certificate (example usage)
-  const addCertificate = (newCert: Omit<CertificateData, "id">) => {
-    const id = Math.max(...certificateData.map((cert) => cert.id)) + 1
-    setCertificateData([...certificateData, { ...newCert, id }])
-  }
+      // Populate the certificateData array with API response
+      const apiResults = response.data.data.data.results
 
-  // Function to remove certificate (example usage)
-  const removeCertificate = (id: number) => {
-    setCertificateData(certificateData.filter((cert) => cert.id !== id))
-  }
+      // Map the API data to match our interface structure
+      const mappedData = apiResults.map((item: any, index: number) => ({
+        id: item.id || index + 1,
+        certNumber: item.certNumber || item.certificate_number || item.cert_number || `N/A`,
+        county: item.county || item.county_name || `N/A`,
+        status: item.status || item.certificate_status || `Unknown`,
+      }))
 
-  // Function to update certificate (example usage)
-  const updateCertificate = (id: number, updatedCert: Partial<CertificateData>) => {
-    setCertificateData(certificateData.map((cert) => (cert.id === id ? { ...cert, ...updatedCert } : cert)))
+      setCertificateData(mappedData)
+    } catch (error) {
+      console.error("Error fetching certificates:", error)
+      // Keep empty array on error
+      setCertificateData([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -199,17 +182,29 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             </div>
 
             <div className="table-body">
-              {filteredCertificateData.map((cert) => (
-                <div key={cert.id} className="table-row">
-                  <div className="cell-cert">
-                    <span className="cert-number">{cert.certNumber}</span>
-                  </div>
-                  <div className="cell-county">{cert.county}</div>
-                  <div className="cell-status">
-                    <span className={`status-badge ${cert.status.toLowerCase().replace(" ", "-")}`}>{cert.status}</span>
-                  </div>
+              {loading ? (
+                <div className="loading-container">
+                  <p>Loading certificates...</p>
                 </div>
-              ))}
+              ) : filteredCertificateData.length > 0 ? (
+                filteredCertificateData.map((cert) => (
+                  <div key={cert.id} className="table-row">
+                    <div className="cell-cert">
+                      <span className="cert-number">{cert.certNumber}</span>
+                    </div>
+                    <div className="cell-county">{cert.county}</div>
+                    <div className="cell-status">
+                      <span className={`status-badge ${cert.status.toLowerCase().replace(" ", "-")}`}>
+                        {cert.status}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="no-data-container">
+                  <p>No certificates found</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

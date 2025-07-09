@@ -351,6 +351,109 @@
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: #a0aec0;
+  font-size: 16px;
+}
+
+.no-data-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: #a0aec0;
+  font-size: 16px;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: #2d3748;
+  border-top: 1px solid #4a5568;
+}
+
+.pagination-info {
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #4a5568;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #667eea;
+}
+
+.pagination-btn:disabled {
+  background: #2d3748;
+  color: #718096;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 12px;
+}
+
+.page-number {
+  background: #4a5568;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.page-number:hover:not(:disabled):not(.ellipsis) {
+  background: #667eea;
+}
+
+.page-number.active {
+  background: #667eea;
+  color: #ffffff;
+}
+
+.page-number.ellipsis {
+  background: transparent;
+  cursor: default;
+  color: #a0aec0;
+}
+
+.page-number:disabled {
+  background: #2d3748;
+  color: #718096;
+  cursor: not-allowed;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .main-content {
@@ -409,6 +512,32 @@
     color: #a0aec0;
     margin-right: 8px;
   }
+
+  .pagination-container {
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-numbers {
+    margin: 0 8px;
+  }
+
+  .pagination-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .page-number {
+    padding: 6px 10px;
+    min-width: 36px;
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -449,5 +578,10 @@
 
   .dropdown-menu {
     min-width: 140px;
+  }
+
+  .pagination-info {
+    font-size: 12px;
+    text-align: center;
   }
 }
