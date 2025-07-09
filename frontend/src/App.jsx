@@ -1,16 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Signin from './components/Signin'
+"use client"
+
+import { useState } from "react"
+import {Signin, Dashboard} from "./components"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const handleLogin = () => {
+    setIsLoggedIn(true)
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+  }
 
   return (
-    <>
-    <Signin/>
-    </>
+    <div className="App">
+      {isLoggedIn ? <Dashboard onLogout={handleLogout} /> : <Signin onLogin={handleLogin} />}
+    </div>
   )
 }
 

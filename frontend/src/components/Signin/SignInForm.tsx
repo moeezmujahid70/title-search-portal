@@ -5,7 +5,11 @@ import React from "react"
 import { useState } from "react"
 import "./SignInForm.css"
 
-export default function SignInForm() {
+interface SignInFormProps {
+  onLogin: () => void
+}
+
+export default function SignInForm({ onLogin }: SignInFormProps) {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -20,6 +24,8 @@ export default function SignInForm() {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
+      // Call the onLogin function to switch to dashboard
+      onLogin()
     }, 1000)
   }
 
