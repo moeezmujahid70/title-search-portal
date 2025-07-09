@@ -39,11 +39,13 @@ ALLOWED_HOSTS = ['*']
 #                  'https://d71bfc306cff.ngrok-free.app']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://d71bfc306cff.ngrok-free.app'
+    'https://d71bfc306cff.ngrok-free.app',
+    'title-search-portal-production.up.railway.app'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "title-search-portal-production.up.railway.app",
 ]
 
 CORS_ALLOW_METHODS = [
