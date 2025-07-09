@@ -83,8 +83,8 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   }, [])
 
   const getCertificateList = async () => {
-    const response = await getApiWithAuth('certificates' )
-    console.log("=====get certificate list" , response)
+    const response = await getApiWithAuth('certificates/?limit=10&page=1' )
+    console.log("=====get certificate list" , response.data.data.data.results)
     
   }
 

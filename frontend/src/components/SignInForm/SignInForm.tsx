@@ -30,11 +30,7 @@ export default function SignInForm({ onLogin }: SignInFormProps) {
         
       }
     )
-    console.log("=====response of login" ,  {
-      "username": username,
-      "password": password
-      
-    }, response.data.data.data.access, response)
+  
     if(response.success){
 
       localStorage.setItem("authToken", response.data.data.data.access)
