@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import "./Dashboard.css"
 
 interface DashboardProps {
@@ -76,6 +76,38 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     },
   ])
 
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [username, setUsername] = useState("Admin")
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false)
+      }
+    }
+
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [dropdownOpen])
+
+  const handleLogout = () => {
+    setDropdownOpen(false)
+    onLogout()
+  }
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username")
+    if (storedUsername) {
+      setUsername(storedUsername)
+    }
+  }, [])
+
   // Function to add new stock (example usage)
   const addStock = (newStock: Omit<StockData, "id">) => {
     const id = Math.max(...stockData.map((stock) => stock.id)) + 1
@@ -101,9 +133,49 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             <h1 className="logo">Logo</h1>
           </div>
           <div className="navbar-right">
-            <button onClick={onLogout} className="logout-button">
-              Logout
-            </button>
+            <div className="user-dropdown" ref={dropdownRef}>
+              <button className="user-trigger" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                <div className="user-avatar">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <span className="username-text">{username}</span>
+                <span className={`dropdown-arrow ${dropdownOpen ? "open" : ""}`}>▼</span>
+              </button>
+
+              {dropdownOpen && (
+                <div className="dropdown-menu">
+                  <button className="dropdown-item" onClick={handleLogout}>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16,17 21,12 16,7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </nav>
