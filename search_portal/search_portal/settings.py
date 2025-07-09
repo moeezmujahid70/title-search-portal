@@ -43,9 +43,11 @@ CSRF_TRUSTED_ORIGINS = [
     'https://title-search-portal-production.up.railway.app'
 ]
 
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
+    "https://your-react-site.up.railway.app",
     "https://title-search-portal-production.up.railway.app",
 ]
 
@@ -69,12 +71,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
     'django_filters',
     'core',
     'drf_yasg',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
