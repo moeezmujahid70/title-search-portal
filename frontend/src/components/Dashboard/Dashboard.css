@@ -272,18 +272,18 @@
   border-bottom: none;
 }
 
-.cell-symbol {
+.cell-cert {
   display: flex;
   align-items: center;
 }
 
-.symbol-code {
+.cert-number {
   font-size: 16px;
   font-weight: 600;
   color: #ffffff;
 }
 
-.cell-price {
+.cell-county {
   display: flex;
   align-items: center;
   font-size: 16px;
@@ -291,12 +291,29 @@
   color: #ffffff;
 }
 
-.cell-balance {
+.cell-status {
   display: flex;
   align-items: center;
-  font-size: 16px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: 500;
-  color: #ffffff;
+  text-transform: capitalize;
+}
+
+.status-badge.in-process {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-badge.ready {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 /* Mobile responsive */
@@ -332,18 +349,18 @@
     padding: 16px;
   }
 
-  .cell-symbol {
+  .cell-cert {
     order: 1;
   }
 
-  .cell-price::before {
-    content: "Price: ";
+  .cell-county::before {
+    content: "County: ";
     color: #a0aec0;
     margin-right: 8px;
   }
 
-  .cell-balance::before {
-    content: "Balance: ";
+  .cell-status::before {
+    content: "Status: ";
     color: #a0aec0;
     margin-right: 8px;
   }
