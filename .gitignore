@@ -335,3 +335,5 @@ tests/
 
 # MongoDB data
 /data/db/
+
+staticfiles/
