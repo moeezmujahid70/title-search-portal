@@ -47,7 +47,7 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://your-react-site.up.railway.app",
+    "https://search-portal.up.railway.app",
     "https://title-search-portal-production.up.railway.app",
 ]
 
