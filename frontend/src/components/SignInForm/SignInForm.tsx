@@ -2,6 +2,7 @@
 
 import React from "react"
 import { useState } from "react"
+import {postAPIWithoutAuth} from "../../utils/api"
 import "./SignInForm.css"
 
 interface SignInFormProps {
@@ -19,29 +20,33 @@ export default function SignInForm({ onLogin }: SignInFormProps) {
     setShowPassword(!showPassword)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
+    const response = await postAPIWithoutAuth('login/' ,   {
+        "username": username,
+        "password": password
+        
+      }
+    )
+    console.log("=====response of login" ,  {
+      "username": username,
+      "password": password
+      
+    }, response.data.data.data.access, response)
+    if(response.success){
 
-    // Check credentials
-    if (username === "admin" && password === "password") {
-      // Success case
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-
-      // Store token in localStorage
-      localStorage.setItem("authToken", token)
-      localStorage.setItem("username", username)
-      localStorage.setItem("loginTime", new Date().toISOString())
-
+      localStorage.setItem("authToken", response.data.data.data.access)
       setIsLoading(false)
       onLogin()
-    } else {
-      // Error case
+    }
+    else{
+
       setError("Invalid username or password. Please try again.")
       setIsLoading(false)
     }
+
   }
 
   return (
@@ -125,10 +130,10 @@ export default function SignInForm({ onLogin }: SignInFormProps) {
         <div className="demo-credentials">
           <p>Demo credentials:</p>
           <p>
-            <strong>Username:</strong> admin
+            <strong>Username:</strong> partner123
           </p>
           <p>
-            <strong>Password:</strong> password
+            <strong>Password:</strong> Crypto#786
           </p>
         </div>
       </div>

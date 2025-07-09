@@ -1,6 +1,7 @@
 "use client"
 import React from "react"
 import { useState, useRef, useEffect } from "react"
+import { getApiWithAuth } from "../../utils/api"
 import "./Dashboard.css"
 
 interface DashboardProps {
@@ -64,6 +65,8 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   }, [dropdownOpen])
 
+
+
   const handleLogout = () => {
     setDropdownOpen(false)
     onLogout()
@@ -74,7 +77,16 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     if (storedUsername) {
       setUsername(storedUsername)
     }
+
+    //get certificate list
+    getCertificateList()
   }, [])
+
+  const getCertificateList = async () => {
+    const response = await getApiWithAuth('certificates' )
+    console.log("=====get certificate list" , response)
+    
+  }
 
   // Function to add new certificate (example usage)
   const addCertificate = (newCert: Omit<CertificateData, "id">) => {
