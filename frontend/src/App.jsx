@@ -29,11 +29,13 @@ function App() {
   }
 
   const handleLogout = () => {
-    // Clear authToken from localStorage on logout
+    // Clear localStorage on logout
     localStorage.removeItem("authToken")
+    localStorage.removeItem("username")
+    localStorage.removeItem("loginTime")
 
     setIsLoggedIn(false)
-    console.log("Logged out: authToken removed from localStorage")
+    console.log("Logged out: localStorage cleared")
   }
 
   // Show loading screen while checking authentication
