@@ -66,7 +66,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     try {
       setLoading(true)
       const response = await getApiWithAuth(`certificates/?limit=8&page=${page}`)
-      console.log("=====get certificate list", `certificates/?limit=8&page=${page}` , response.data.data.data)
+      console.log("=====get certificate list", response.data.data.data.total)
       setTotalPages(response.data.data.data.pages)
       setCurrentPage(page)
 
@@ -110,7 +110,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   }
 
-// Generate page numbers for pagination
+  // Generate page numbers for pagination
 const getPageNumbers = () => {
   const pages: (number | string)[] = [];
   const maxVisiblePages = 5;
@@ -142,6 +142,18 @@ const getPageNumbers = () => {
 
   return pages;
 };
+
+  // Format status for display
+  const formatStatusDisplay = (status: string) => {
+    if (status.toLowerCase() === "in_process" || status.toLowerCase() === "in-process") {
+      return "In Process"
+    }
+    if (status.toLowerCase() === "ready") {
+      return "Ready"
+    }
+    return status
+  }
+
   return (
     <div className="dashboard-container">
       {/* Navbar */}
@@ -249,8 +261,8 @@ const getPageNumbers = () => {
                     </div>
                     <div className="cell-county">{cert.county}</div>
                     <div className="cell-status">
-                      <span className={`status-badge ${cert.status.toLowerCase().replace(" ", "-")}`}>
-                        {cert.status}
+                      <span className={`status-badge ${cert.status.toLowerCase().replace("_", "-").replace(" ", "-")}`}>
+                        {formatStatusDisplay(cert.status)}
                       </span>
                     </div>
                   </div>
