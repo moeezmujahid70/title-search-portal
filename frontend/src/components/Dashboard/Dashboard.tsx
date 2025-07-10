@@ -205,7 +205,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
             <div className="logo">
               <img
                 src={"/certificate.png"}
-                alt="Certificate Logo"
+                alt="Logo"
                 className="logo-image"
                 style={{
                   height: "55px",
