@@ -103,7 +103,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
         if (status === "in-process") {
           apiStatus = "in_process"
         } else if (status === "ready") {
-          apiStatus = "Ready"
+          apiStatus = "ready"
         }
         apiUrl += `&status=${encodeURIComponent(apiStatus)}`
       }
