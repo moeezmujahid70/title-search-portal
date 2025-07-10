@@ -109,7 +109,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       }
 
       const response = await getApiWithAuth(apiUrl)
-      console.log("=====get certificate list", response.data.data.data.total)
       setTotalPages(response.data.data.data.pages)
       setCurrentPage(page)
 
@@ -203,7 +202,19 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       <nav className="navbar">
         <div className="navbar-content">
           <div className="navbar-left">
-            <h1 className="logo">Logo</h1>
+            <div className="logo">
+              <img
+                src={"/certificate.png"}
+                alt="Certificate Logo"
+                className="logo-image"
+                style={{
+                  height: "55px",
+                  width: "auto",
+                  opacity: "0.9",
+                  filter: "brightness(1.1)",
+                }}
+              />
+            </div>
           </div>
           <div className="navbar-right">
             <div className="user-dropdown" ref={dropdownRef}>
