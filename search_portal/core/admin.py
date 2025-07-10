@@ -143,5 +143,5 @@ admin.site.register(User, CleanUserAdmin)
 # Optional: If you want to completely hide Groups and Permissions from admin
 
 # Uncomment these lines if you want to remove Groups and Permissions from admin entirely
-# admin.site.unregister(Group)
+admin.site.unregister(Group)
 # admin.site.unregister(Permission)  # This might cause issues, be careful
