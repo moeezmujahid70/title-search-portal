@@ -110,9 +110,9 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   }
 
- // Generate page numbers for pagination
+// Generate page numbers for pagination
 const getPageNumbers = () => {
-  const pages = [];
+  const pages: (number | string)[] = [];
   const maxVisiblePages = 5;
 
   if (totalPages <= maxVisiblePages) {
@@ -142,7 +142,6 @@ const getPageNumbers = () => {
 
   return pages;
 };
-
   return (
     <div className="dashboard-container">
       {/* Navbar */}
