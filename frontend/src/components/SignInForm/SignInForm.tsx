@@ -123,7 +123,7 @@ export default function SignInForm({ onLogin }: SignInFormProps) {
           </button>
         </form>
 
-        <div className="demo-credentials">
+        {/* <div className="demo-credentials">
           <p>Demo credentials:</p>
           <p>
             <strong>Username:</strong> partner123
@@ -131,7 +131,7 @@ export default function SignInForm({ onLogin }: SignInFormProps) {
           <p>
             <strong>Password:</strong> Crypto#786
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   )
