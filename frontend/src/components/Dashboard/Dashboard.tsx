@@ -1,7 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
 import React from "react"
-
 import { getApiWithAuth } from "../../utils/api"
 import "./Dashboard.css"
 
@@ -50,12 +49,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const [totalPages, setTotalPages] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState("")
-
   const [statusFilter, setStatusFilter] = useState<string>("all")
-  const filteredCertificateData = certificateData.filter((cert) => {
-    if (statusFilter === "all") return true
-    return cert.status.toLowerCase().replace(" ", "-") === statusFilter
-  })
+
+  // Remove local filtering since we'll get filtered data from API
+  const filteredCertificateData = certificateData
 
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [username, setUsername] = useState("Admin")
@@ -67,11 +64,9 @@ export default function Dashboard({ onLogout }: DashboardProps) {
         setDropdownOpen(false)
       }
     }
-
     if (dropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside)
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
@@ -88,10 +83,10 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       setUsername(storedUsername)
     }
     // Get certificate list on component mount
-    getCertificateList(1, "")
+    getCertificateList(1, "", "all")
   }, [])
 
-  const getCertificateList = async (page = 1, search = "") => {
+  const getCertificateList = async (page = 1, search = "", status = "all") => {
     try {
       setLoading(true)
       let apiUrl = `certificates/?limit=8&page=${page}`
@@ -99,6 +94,18 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       // Add search parameter if search term exists
       if (search && search.trim() !== "") {
         apiUrl += `&search=${encodeURIComponent(search.trim())}`
+      }
+
+      // Add status parameter if not "all"
+      if (status && status !== "all") {
+        // Map frontend status values to API values
+        let apiStatus = status
+        if (status === "in-process") {
+          apiStatus = "in_process"
+        } else if (status === "ready") {
+          apiStatus = "Ready"
+        }
+        apiUrl += `&status=${encodeURIComponent(apiStatus)}`
       }
 
       const response = await getApiWithAuth(apiUrl)
@@ -127,41 +134,40 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   }
 
-  // Pagination handlers
+  // Pagination handlers - now include status filter
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      getCertificateList(currentPage + 1, searchTerm)
+      getCertificateList(currentPage + 1, searchTerm, statusFilter)
     }
   }
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      getCertificateList(currentPage - 1, searchTerm)
+      getCertificateList(currentPage - 1, searchTerm, statusFilter)
     }
   }
 
   const handlePageClick = (page: number) => {
     if (page !== currentPage && page >= 1 && page <= totalPages) {
-      getCertificateList(page, searchTerm)
+      getCertificateList(page, searchTerm, statusFilter)
     }
   }
 
-  // Search handler
+  // Search handler - now include status filter
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setCurrentPage(1) // Reset to first page when searching
-    getCertificateList(1, searchTerm)
+    getCertificateList(1, searchTerm, statusFilter)
   }
 
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchTerm(value)
-
     // If search is cleared, automatically show all results
     if (value.trim() === "") {
       setCurrentPage(1)
-      getCertificateList(1, "")
+      getCertificateList(1, "", statusFilter)
     }
   }
 
@@ -169,7 +175,15 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const handleClearSearch = () => {
     setSearchTerm("")
     setCurrentPage(1)
-    getCertificateList(1, "")
+    getCertificateList(1, "", statusFilter)
+  }
+
+  // Handle status filter change
+  const handleStatusFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value
+    setStatusFilter(newStatus)
+    setCurrentPage(1) // Reset to first page when changing filter
+    getCertificateList(1, searchTerm, newStatus)
   }
 
   // Format status for display
@@ -212,7 +226,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                 <span className="username-text">{username}</span>
                 <span className={`dropdown-arrow ${dropdownOpen ? "open" : ""}`}>▼</span>
               </button>
-
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <button className="dropdown-item" onClick={handleLogout}>
@@ -285,11 +298,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                   )}
                 </div>
                 <div className="filter-container">
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="filter-select"
-                  >
+                  <select value={statusFilter} onChange={handleStatusFilterChange} className="filter-select">
                     <option value="all">All Status</option>
                     <option value="in-process">In Process</option>
                     <option value="ready">Ready</option>
@@ -306,7 +315,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
               <div className="header-county">County</div>
               <div className="header-status">Status</div>
             </div>
-
             <div className="table-body">
               {loading ? (
                 <div className="loading-container">
@@ -341,7 +349,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                     Page {currentPage} of {totalPages}
                   </span>
                 </div>
-
                 <div className="pagination-controls">
                   <button className="pagination-btn" onClick={handlePrevPage} disabled={currentPage === 1 || loading}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -349,7 +356,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                     </svg>
                     Previous
                   </button>
-
                   <div className="page-numbers">
                     {getPageNumbers(totalPages, currentPage).map((page, index) => (
                       <button
@@ -362,7 +368,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                       </button>
                     ))}
                   </div>
-
                   <button
                     className="pagination-btn"
                     onClick={handleNextPage}
