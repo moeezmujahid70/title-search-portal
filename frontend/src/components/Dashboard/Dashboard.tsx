@@ -1,6 +1,7 @@
 "use client"
-import React from "react"
 import { useState, useRef, useEffect } from "react"
+import React from "react"
+
 import { getApiWithAuth } from "../../utils/api"
 import "./Dashboard.css"
 
@@ -15,12 +16,40 @@ interface CertificateData {
   status: string
 }
 
+function getPageNumbers(totalPages: number, currentPage: number): (number | string)[] {
+  const pages: (number | string)[] = []
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i)
+    }
+  } else {
+    if (currentPage <= 3) {
+      pages.push(1, 2, 3, "...")
+      pages.push(totalPages)
+    } else if (currentPage >= totalPages - 2) {
+      pages.push(1)
+      pages.push("...")
+      for (let i = totalPages - 2; i <= totalPages; i++) {
+        pages.push(i)
+      }
+    } else {
+      pages.push(1)
+      pages.push("...")
+      pages.push(currentPage - 1, currentPage, currentPage + 1)
+      pages.push("...")
+      pages.push(totalPages)
+    }
+  }
+  return pages
+}
+
 export default function Dashboard({ onLogout }: DashboardProps) {
   // Certificate data in state - start with empty array
   const [certificateData, setCertificateData] = useState<CertificateData[]>([])
   const [loading, setLoading] = useState(false)
   const [totalPages, setTotalPages] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState("")
 
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const filteredCertificateData = certificateData.filter((cert) => {
@@ -59,13 +88,20 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       setUsername(storedUsername)
     }
     // Get certificate list on component mount
-    getCertificateList(1)
+    getCertificateList(1, "")
   }, [])
 
-  const getCertificateList = async (page = 1) => {
+  const getCertificateList = async (page = 1, search = "") => {
     try {
       setLoading(true)
-      const response = await getApiWithAuth(`certificates/?limit=8&page=${page}`)
+      let apiUrl = `certificates/?limit=8&page=${page}`
+
+      // Add search parameter if search term exists
+      if (search && search.trim() !== "") {
+        apiUrl += `&search=${encodeURIComponent(search.trim())}`
+      }
+
+      const response = await getApiWithAuth(apiUrl)
       console.log("=====get certificate list", response.data.data.data.total)
       setTotalPages(response.data.data.data.pages)
       setCurrentPage(page)
@@ -94,54 +130,47 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   // Pagination handlers
   const handleNextPage = () => {
     if (currentPage < totalPages) {
-      getCertificateList(currentPage + 1)
+      getCertificateList(currentPage + 1, searchTerm)
     }
   }
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      getCertificateList(currentPage - 1)
+      getCertificateList(currentPage - 1, searchTerm)
     }
   }
 
   const handlePageClick = (page: number) => {
     if (page !== currentPage && page >= 1 && page <= totalPages) {
-      getCertificateList(page)
+      getCertificateList(page, searchTerm)
     }
   }
 
-  // Generate page numbers for pagination
-const getPageNumbers = () => {
-  const pages: (number | string)[] = [];
-  const maxVisiblePages = 5;
+  // Search handler
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    setCurrentPage(1) // Reset to first page when searching
+    getCertificateList(1, searchTerm)
+  }
 
-  if (totalPages <= maxVisiblePages) {
-    // Show all pages if total pages is less than max visible
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i);
-    }
-  } else {
-    // Show pages with ellipsis logic
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchTerm(value)
 
-    if (startPage > 1) {
-      pages.push(1);
-      if (startPage > 2) pages.push("...");
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) pages.push("...");
-      pages.push(totalPages);
+    // If search is cleared, automatically show all results
+    if (value.trim() === "") {
+      setCurrentPage(1)
+      getCertificateList(1, "")
     }
   }
 
-  return pages;
-};
+  // Handle clear search
+  const handleClearSearch = () => {
+    setSearchTerm("")
+    setCurrentPage(1)
+    getCertificateList(1, "")
+  }
 
   // Format status for display
   const formatStatusDisplay = (status: string) => {
@@ -222,8 +251,38 @@ const getPageNumbers = () => {
             <div className="header-right">
               <div className="search-filter-container">
                 <div className="search-container">
-                  <input type="text" placeholder="Search..." className="search-input" />
-                  <div className="search-icon">🔍</div>
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="search-input"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault()
+                        handleSearch(e)
+                      }
+                    }}
+                  />
+                  {searchTerm.trim() !== "" ? (
+                    <button className="search-clear-btn" onClick={handleClearSearch}>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  ) : (
+                    <div className="search-icon">🔍</div>
+                  )}
                 </div>
                 <div className="filter-container">
                   <select
@@ -292,7 +351,7 @@ const getPageNumbers = () => {
                   </button>
 
                   <div className="page-numbers">
-                    {getPageNumbers().map((page, index) => (
+                    {getPageNumbers(totalPages, currentPage).map((page, index) => (
                       <button
                         key={index}
                         className={`page-number ${page === currentPage ? "active" : ""} ${page === "..." ? "ellipsis" : ""}`}
