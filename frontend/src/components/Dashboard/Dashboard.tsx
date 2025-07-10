@@ -270,7 +270,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
           <div className="dashboard-header">
             <div className="header-left">
               <h2 className="watchlist-title">Certificates</h2>
-              <p className="last-updated">Updated At 20/04/2025 At 4:30 PM</p>
             </div>
             <div className="header-right">
               <div className="search-filter-container">
