@@ -89,7 +89,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const getCertificateList = async (page = 1, search = "", status = "all") => {
     try {
       setLoading(true)
-      let apiUrl = `certificates/?limit=8&page=${page}`
+      let apiUrl = `certificates/?limit=15&page=${page}`
 
       // Add search parameter if search term exists
       if (search && search.trim() !== "") {
