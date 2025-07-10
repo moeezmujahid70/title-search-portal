@@ -19,6 +19,8 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   // Certificate data in state - start with empty array
   const [certificateData, setCertificateData] = useState<CertificateData[]>([])
   const [loading, setLoading] = useState(false)
+  const [totalPages, setTotalPages] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const filteredCertificateData = certificateData.filter((cert) => {
@@ -57,21 +59,23 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       setUsername(storedUsername)
     }
     // Get certificate list on component mount
-    getCertificateList()
+    getCertificateList(1)
   }, [])
 
-  const getCertificateList = async () => {
+  const getCertificateList = async (page = 1) => {
     try {
       setLoading(true)
-      const response = await getApiWithAuth("certificates/?limit=8&page=1")
-      console.log("=====get certificate list", response.data.data.data.results)
+      const response = await getApiWithAuth(`certificates/?limit=8&page=${page}`)
+      console.log("=====get certificate list", `certificates/?limit=8&page=${page}` , response.data.data.data)
+      setTotalPages(response.data.data.data.pages)
+      setCurrentPage(page)
 
       // Populate the certificateData array with API response
       const apiResults = response.data.data.data.results
 
       // Map the API data to match our interface structure
       const mappedData = apiResults.map((item: any, index: number) => ({
-        id: item.id || index + 1,
+        id: item.id || (page - 1) * 8 + index + 1,
         certNumber: item.certNumber || item.certificate_number || item.cert_number || `N/A`,
         county: item.county || item.county_name || `N/A`,
         status: item.status || item.certificate_status || `Unknown`,
@@ -86,6 +90,58 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       setLoading(false)
     }
   }
+
+  // Pagination handlers
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      getCertificateList(currentPage + 1)
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      getCertificateList(currentPage - 1)
+    }
+  }
+
+  const handlePageClick = (page: number) => {
+    if (page !== currentPage && page >= 1 && page <= totalPages) {
+      getCertificateList(page)
+    }
+  }
+
+ // Generate page numbers for pagination
+const getPageNumbers = () => {
+  const pages = [];
+  const maxVisiblePages = 5;
+
+  if (totalPages <= maxVisiblePages) {
+    // Show all pages if total pages is less than max visible
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Show pages with ellipsis logic
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    if (startPage > 1) {
+      pages.push(1);
+      if (startPage > 2) pages.push("...");
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) pages.push("...");
+      pages.push(totalPages);
+    }
+  }
+
+  return pages;
+};
 
   return (
     <div className="dashboard-container">
@@ -206,6 +262,50 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                 </div>
               )}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="pagination-container">
+                <div className="pagination-info">
+                  <span>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                </div>
+
+                <div className="pagination-controls">
+                  <button className="pagination-btn" onClick={handlePrevPage} disabled={currentPage === 1 || loading}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="15,18 9,12 15,6"></polyline>
+                    </svg>
+                    Previous
+                  </button>
+
+                  <div className="page-numbers">
+                    {getPageNumbers().map((page, index) => (
+                      <button
+                        key={index}
+                        className={`page-number ${page === currentPage ? "active" : ""} ${page === "..." ? "ellipsis" : ""}`}
+                        onClick={() => typeof page === "number" && handlePageClick(page)}
+                        disabled={page === "..." || loading}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    className="pagination-btn"
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages || loading}
+                  >
+                    Next
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="9,18 15,12 9,6"></polyline>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>

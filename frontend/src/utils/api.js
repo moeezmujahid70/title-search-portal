@@ -54,7 +54,6 @@ export const getApiWithAuth = async (url) => {
 const setApiHeader = async () => {
     // const token = await getAccessToken();
     const token =  localStorage.getItem("authToken")
-    console.log("------ token in api file", token);
     axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   };
   
