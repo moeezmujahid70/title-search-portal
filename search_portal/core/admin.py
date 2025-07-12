@@ -10,13 +10,25 @@ from django.contrib import admin
 from rest_framework_simplejwt.token_blacklist import models as blacklist_models
 
 
+
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
-    list_display = ('cert_number', 'county', 'status',
-                    'created_at')
-    list_editable = ('status',)
-    search_fields = ('cert_number', 'county')
-    list_filter = ('status',)
+    list_display = ['cert_number', 'county', 'user', 'status', 'created_at']
+    list_filter = ['status', 'created_at']
+    search_fields = ['cert_number', 'county', 'user__username']
+
+    # Optional: Make the form more user-friendly
+    fieldsets = (
+        ('Certificate Information', {
+            'fields': ('cert_number', 'county')
+        }),
+        ('Assignment', {
+            'fields': ('user',)
+        }),
+        ('Status', {
+            'fields': ('status',)
+        }),
+    )
 
 
 # Unregister BlacklistedToken and OutstandingToken

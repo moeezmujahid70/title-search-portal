@@ -37,7 +37,8 @@ class CertificateListView(APIView):
         responses={200: CertificateSerializer(many=True)}
     )
     def get(self, request):
-        queryset = Certificate.objects.all()
+        # queryset = Certificate.objects.all()
+        queryset = Certificate.objects.filter(user=request.user)
 
         # 🔍 Filters
         status_param = request.query_params.get('status')
