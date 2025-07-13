@@ -2,7 +2,7 @@
 
 import React from "react"
 import { useState } from "react"
-import {postAPIWithoutAuth} from "../../utils/api"
+import { postAPIWithoutAuth } from "../../utils/api"
 import "./SignInForm.css"
 
 interface SignInFormProps {
@@ -24,20 +24,21 @@ export default function SignInForm({ onLogin }: SignInFormProps) {
     e.preventDefault()
     setIsLoading(true)
     setError("")
-    const response = await postAPIWithoutAuth('login/' ,   {
-        "username": username,
-        "password": password
-        
-      }
+    const response = await postAPIWithoutAuth('login/', {
+      "username": username,
+      "password": password
+
+    }
     )
-  
-    if(response.success){
+
+    if (response.success) {
 
       localStorage.setItem("authToken", response.data.data.data.access)
+      localStorage.setItem("username", response.data.data.data.username)
       setIsLoading(false)
       onLogin()
     }
-    else{
+    else {
 
       setError("Invalid username or password. Please try again.")
       setIsLoading(false)
