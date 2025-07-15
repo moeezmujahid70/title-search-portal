@@ -5,10 +5,19 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.contrib import admin
-from .models import Certificate
+from .models import Certificate, StatusChoice
 from django.contrib import admin
 from rest_framework_simplejwt.token_blacklist import models as blacklist_models
 
+
+@admin.register(StatusChoice)
+class StatusChoiceAdmin(admin.ModelAdmin):
+    list_display = ['label', 'name', 'is_active', 'is_default', 'order']
+    list_editable = ['is_active', 'is_default', 'order']
+
+    # Only show fields admin needs to manage
+    fields = ['label', 'is_active', 'is_default', 'order']
+    readonly_fields = ['name']  # Show but don't allow editing
 
 
 @admin.register(Certificate)
