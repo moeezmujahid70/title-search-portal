@@ -1,8 +1,8 @@
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .models import Certificate
-from .serializers import CertificateSerializer, CustomTokenObtainPairSerializer
+from .models import Certificate, StatusChoice
+from .serializers import CertificateSerializer, CustomTokenObtainPairSerializer, StatusChoiceSerializer
 from .utils import success_response
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -46,7 +46,8 @@ class CertificateListView(APIView):
         search_param = request.query_params.get('search')
 
         if status_param:
-            queryset = queryset.filter(status=status_param)
+            # Filter by status name instead of status ID
+            queryset = queryset.filter(status__name=status_param)
 
         if county_param:
             queryset = queryset.filter(county__iexact=county_param)
@@ -82,6 +83,46 @@ class CertificateListView(APIView):
                 "page_size": limit,
             },
             message="Certificates fetched successfully.",
+            status_code=status.HTTP_200_OK
+        )
+
+
+class StatusChoiceListView(APIView):
+    """
+    Simple API to get status choices
+    Filter by is_active or return all
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Check for is_active filter
+        is_active = request.query_params.get('is_active')
+
+        if is_active is not None:
+            # Convert string to boolean
+            is_active_bool = is_active.lower() in ['true', '1', 'yes']
+            queryset = StatusChoice.objects.filter(is_active=is_active_bool)
+        else:
+            # Return all if no filter
+            queryset = StatusChoice.objects.all()
+
+        # Order by order field, then label
+        queryset = queryset.order_by('order', 'label')
+
+        # Check if empty
+        if not queryset.exists():
+            return success_response(
+                data=[],
+                message="No status choices found.",
+                status_code=status.HTTP_200_OK
+            )
+
+        # Serialize and return
+        serializer = StatusChoiceSerializer(queryset, many=True)
+
+        return success_response(
+            data=serializer.data,
+            message=f"Successfully retrieved {queryset.count()} status choice(s).",
             status_code=status.HTTP_200_OK
         )
 
