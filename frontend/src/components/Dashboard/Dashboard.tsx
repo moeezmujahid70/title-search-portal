@@ -1,11 +1,18 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
+import { generateColorFromString } from '../../utils/colorUtils';
 import React from "react"
 import { getApiWithAuth } from "../../utils/api"
 import "./Dashboard.css"
 
 interface DashboardProps {
   onLogout: () => void
+}
+
+interface StatusOption {
+  id: number
+  name: string
+  label: string
 }
 
 interface CertificateData {
@@ -45,6 +52,7 @@ function getPageNumbers(totalPages: number, currentPage: number): (number | stri
 export default function Dashboard({ onLogout }: DashboardProps) {
   // Certificate data in state - start with empty array
   const [certificateData, setCertificateData] = useState<CertificateData[]>([])
+  const [statusOptions, setStatusOptions] = useState<StatusOption[]>([])
   const [loading, setLoading] = useState(false)
   const [totalPages, setTotalPages] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
@@ -83,8 +91,27 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       setUsername(storedUsername)
     }
     // Get certificate list on component mount
+    getStatusOptions()
     getCertificateList(1, "", "all")
+    // Get status options on component mount
+
   }, [])
+
+  const getStatusOptions = async () => {
+    try {
+      let apiUrl = 'statuses/?is_active=true'
+      // If statusFilter is not "all", add it to the API URL
+      const response = await getApiWithAuth(apiUrl)
+      // console.log("Status options fetched successfully:", response)
+      if (response.data.data.success) {
+        console.log("Status options fetched successfully:", response.data.data)
+        setStatusOptions(response.data.data.data)
+      }
+    } catch (error) {
+      console.error("Error fetching status options:", error)
+      setStatusOptions([])
+    }
+  }
 
   const getCertificateList = async (page = 1, search = "", status = "all") => {
     try {
@@ -98,14 +125,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
 
       // Add status parameter if not "all"
       if (status && status !== "all") {
-        // Map frontend status values to API values
-        let apiStatus = status
-        if (status === "in-process") {
-          apiStatus = "in_process"
-        } else if (status === "ready") {
-          apiStatus = "ready"
-        }
-        apiUrl += `&status=${encodeURIComponent(apiStatus)}`
+        apiUrl += `&status=${encodeURIComponent(status)}`
       }
 
       const response = await getApiWithAuth(apiUrl)
@@ -184,17 +204,22 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     setCurrentPage(1) // Reset to first page when changing filter
     getCertificateList(1, searchTerm, newStatus)
   }
-
-  // Format status for display
+  // Format status display for better readability
   const formatStatusDisplay = (status: string) => {
-    if (status.toLowerCase() === "in_process" || status.toLowerCase() === "in-process") {
-      return "In Process"
+    // Find the status option to get its label
+    const statusOption = statusOptions.find(opt => opt.name === status)
+    if (statusOption) {
+      return statusOption.label
     }
-    if (status.toLowerCase() === "ready") {
-      return "Ready"
-    }
-    return status
+    // Fallback formatting if status not found in options
+    return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
   }
+
+  const getDynamicStatusStyle = (status: string) => {
+    // Keep your existing defined colors
+    const statusKey = status.toLowerCase().replace("_", "-").replace(" ", "-");
+    return generateColorFromString(status);
+  };
 
   return (
     <div className="dashboard-container">
@@ -307,11 +332,22 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                     <div className="search-icon">🔍</div>
                   )}
                 </div>
-                <div className="filter-container">
+                {/* <div className="filter-container">
                   <select value={statusFilter} onChange={handleStatusFilterChange} className="filter-select">
+
                     <option value="all">All Status</option>
                     <option value="in-process">In Process</option>
                     <option value="ready">Ready</option>
+                  </select>
+                </div> */}
+                <div className="filter-container">
+                  <select value={statusFilter} onChange={handleStatusFilterChange} className="filter-select">
+                    <option value="all">All Status</option>
+                    {statusOptions.map((status) => (
+                      <option key={status.id} value={status.name}>
+                        {status.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -337,8 +373,16 @@ export default function Dashboard({ onLogout }: DashboardProps) {
                       <span className="cert-number">{cert.certNumber}</span>
                     </div>
                     <div className="cell-county">{cert.county}</div>
-                    <div className="cell-status">
+                    {/* <div className="cell-status">
                       <span className={`status-badge ${cert.status.toLowerCase().replace("_", "-").replace(" ", "-")}`}>
+                        {formatStatusDisplay(cert.status)}
+                      </span>
+                    </div> */}
+                    <div className="cell-status">
+                      <span
+                        className={`status-badge ${cert.status.toLowerCase().replace("_", "-").replace(" ", "-")}`}
+                        style={getDynamicStatusStyle(cert.status)}
+                      >
                         {formatStatusDisplay(cert.status)}
                       </span>
                     </div>
