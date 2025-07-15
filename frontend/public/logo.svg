@@ -1,0 +1,21 @@
+<svg preserveAspectRatio="xMidYMid meet" data-bbox="20 20 160 160" viewBox="20 20 160 160" height="200" width="200" xmlns="http://www.w3.org/2000/svg" data-type="color" role="presentation" aria-hidden="true" aria-label=""><defs><style>#comp-m51hcbp9 svg [data-color="1"] {fill: #361A11;}</style></defs>
+    <g>
+        <path d="M26.9 26.9h146.2L180 20H20v160l6.9-6.9V26.9z" fill="#ff625b" data-color="1"></path>
+        <path d="M33.6 166.4l6.8-6.8V40.3h119.3l6.8-6.8H33.6v132.9z" fill="#ff625b" data-color="1"></path>
+        <path d="M40.4 159.6l.1-.1v-119h119l.1-.1H40.4v119.2z" fill="#ff625b" data-color="1"></path>
+        <path d="M47.3 152.7l6.8-6.8V54H146l6.8-6.8H47.3v105.5z" fill="#ff625b" data-color="1"></path>
+        <path d="M47.1 152.9l.1-.1V47.2h105.5l.1-.1H47.1v105.8z" fill="#ff625b" data-color="1"></path>
+        <path d="M60.7 139.3l7-7V67.6h64.7l7-7H60.7v78.7z" fill="#ff625b" data-color="1"></path>
+        <path d="M74.2 125.8l7-7V81.2h37.6l7-7H74.2v51.6z" fill="#ff625b" data-color="1"></path>
+        <path d="M87.7 112.3l7.1-7.1V94.8h10.4l7.1-7.1H87.7v24.6z" fill="#ff625b" data-color="1"></path>
+        <path d="M20.3 180h9.5L180 29.8v-9.7L20 180h.3z" fill="#ff625b" data-color="1"></path>
+        <path d="M86.2 180L180 86.2v-9.7L76.5 180h9.7z" fill="#ff625b" data-color="1"></path>
+        <path d="M49.2 180L180 49.2v-9.7L39.5 180h9.7z" fill="#ff625b" data-color="1"></path><path d="M67.7 180L180 67.7V58L58 180h9.7z" fill="#ff625b" data-color="1"></path>
+        
+        <path d="M104.7 180l75.3-75.3V95l-85 85h9.7z" fill="#ff625b" data-color="1"></path>
+        <path d="M123.2 180l56.8-56.8v-9.7L113.4 180h9.8z" fill="#ff625b" data-color="1"></path>
+        <path d="M141.6 180l38.3-38.3V132l-48 48h9.7z" fill="#ff625b" data-color="1"></path>
+        <path d="M160.1 180l19.8-19.8v-9.7L150.4 180h9.7z" fill="#ff625b" data-color="1"></path>
+        <path d="M180 180v-11.1L168.9 180H180z" fill="#ff625b" data-color="1"></path>
+    </g>
+</svg>
