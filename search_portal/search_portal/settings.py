@@ -32,17 +32,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('PORTAL_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-                 'https://title-search-portal-production.up.railway.app',
-                 'search-portal.up.railway.app',
-                 'http://144.76.59.234:8000',
-                 'http://144.76.59.234',
-                 'http://localhost:8000',
-                 'http://144.76.59.234:3000',
-                 ]
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1',
+#                  'https://title-search-portal-production.up.railway.app',
+#                  'search-portal.up.railway.app',
+#                  'http://144.76.59.234:8000',
+#                  'http://144.76.59.234',
+#                  'http://localhost:8000',
+#                  'http://144.76.59.234:3000',
+#                  ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://title-search-portal-production.up.railway.app'
