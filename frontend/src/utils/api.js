@@ -1,7 +1,8 @@
 
 import axios from "axios";
 
-export const BASE_URL = "https://title-search-portal-production.up.railway.app/api/";
+// export const BASE_URL = "https://title-search-portal-production.up.railway.app/api/";
+export const BASE_URL = "http://144.76.59.234:8000/api/";
 // export const BASE_URL = "http://localhost:8000/api/"; // For local development
 axios.defaults.baseURL = BASE_URL;
 

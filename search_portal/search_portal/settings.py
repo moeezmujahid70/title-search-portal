@@ -32,14 +32,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('PORTAL_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-#                  'https://d71bfc306cff.ngrok-free.app']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1',
+                 'https://title-search-portal-production.up.railway.app',
+                 'search-portal.up.railway.app',
+                 'http://144.76.59.234:8000',
+                 'http://144.76.59.234',
+                 'http://localhost:8000',
+                 'http://144.76.59.234:3000',
+                 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://d71bfc306cff.ngrok-free.app',
     'https://title-search-portal-production.up.railway.app'
 ]
 
@@ -49,6 +54,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://search-portal.up.railway.app",
     "https://title-search-portal-production.up.railway.app",
+    "http://144.76.59.234:3000",
 ]
 
 CORS_ALLOW_METHODS = [
