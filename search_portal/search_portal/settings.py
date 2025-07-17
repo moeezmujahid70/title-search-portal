@@ -32,17 +32,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('PORTAL_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+# Only allow requests whose Host header matches one of these
+ALLOWED_HOSTS = [
+    # your server’s public IP (no port, just the host)
+    '144.76.59.234',
 
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-#                  'https://title-search-portal-production.up.railway.app',
-#                  'search-portal.up.railway.app',
-#                  'http://144.76.59.234:8000',
-#                  'http://144.76.59.234',
-#                  'http://localhost:8000',
-#                  'http://144.76.59.234:3000',
-#                  ]
+    # if you test via localhost on the server itself
+    '127.0.0.1',
+    'localhost',
+
+    # any ngrok host you use (uncomment when using ngrok)
+    # 'abc123.ngrok.io',
+
+    # any custom domain you add later
+    # 'www.yourdomain.com',
+    'https://title-search-portal-production.up.railway.app',
+    'search-portal.up.railway.app',
+]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://title-search-portal-production.up.railway.app'
