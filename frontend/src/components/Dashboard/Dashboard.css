@@ -358,6 +358,28 @@
   align-items: center;
 }
 
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-text,
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.brand-name span {
+  font-family: 'Georgia', serif;
+  /* Professional serif font */
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #aac7c5;
+}
+
 
 .status-badge {
   padding: 6px 14px;

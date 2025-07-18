@@ -49,6 +49,27 @@ export default function SignInForm({ onLogin }: SignInFormProps) {
   return (
     <div className="signin-container">
       <div className="signin-card">
+        <div className="card-header">
+          <div className="logo-container-topright">
+            <div className="logo">
+              <img
+                src={"/certificate.png"}
+                alt="Logo"
+                className="logo-image"
+                style={{
+                  height: "30px",
+                  width: "auto",
+                  opacity: "0.9",
+                  filter: "brightness(0.5)",
+                }}
+              />
+            </div>
+            <div className="brand-name">
+              <span>Anne Labes, Esq.</span>
+            </div>
+          </div>
+        </div>
+
         <div className="signin-header">
           <h1>Welcome Back</h1>
           <p>Sign in to your account</p>

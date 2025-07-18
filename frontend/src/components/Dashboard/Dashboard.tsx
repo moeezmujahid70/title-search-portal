@@ -227,18 +227,23 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       <nav className="navbar">
         <div className="navbar-content">
           <div className="navbar-left">
-            <div className="logo">
-              <img
-                src={"/certificate.png"}
-                alt="Logo"
-                className="logo-image"
-                style={{
-                  height: "55px",
-                  width: "auto",
-                  opacity: "0.9",
-                  filter: "brightness(1.1)",
-                }}
-              />
+            <div className="logo-container">
+              <div className="logo">
+                <img
+                  src={"/certificate.png"}
+                  alt="Logo"
+                  className="logo-image"
+                  style={{
+                    height: "28px",
+                    width: "auto",
+                    opacity: "0.9",
+                    filter: "brightness(0.5)",
+                  }}
+                />
+              </div>
+              <div className="brand-name">
+                <span>Anne Labes, Esq.</span>
+              </div>
             </div>
           </div>
           <div className="navbar-right">
